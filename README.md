@@ -1,6 +1,11 @@
 # ldap-access-log-humanizer
 A script to help make OpenLDAP access logs more readable for humans and machines
 
+This project is a fork of [mozilla/ldap-access-log-humanizer] (https://github.com/mozilla/ldap-access-log-humanizer)
+
+The main objective of this fork is to improve performance and also share some scripts for elk ingestion and visualization.
+
+
 ## Example
 _____
 This will convert LDAP access logs in this format:
