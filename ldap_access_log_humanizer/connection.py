@@ -82,30 +82,33 @@ class Connection:
 
         return ""
 
+
     def add_operation(self, rest):
         # Expecting something like:
         # op=1 BIND dn="uid=bind-generateusers,ou=logins,dc=example" mech=SIMPLE ssf=0
-        #
         pattern = r'^op=(\d+) (.*)$'
         match = re.search(pattern, rest)
 
-        if match:
-            op_id = match.group(1)
-            operation = self.operations.get(int(op_id))
-
-            # if an existing operation, update it's context
-            if operation:
-                operation.add_event(match.group(2))
-            # if a new operation, add it to our operations list
-            else:
-                operation = Operation(int(op_id))
-                operation.add_event(match.group(2))
-                self.operations[int(op_id)] = operation
-
-            if operation.loggable():
-                self.logger.log(self.reconstitute(operation.dict()))
-        else:
+        if not match:
             raise Exception('Malformed operation: {}'.format(rest))
+
+        op_id = int(match.group(1))
+        details = match.group(2)
+
+        operation = self.operations.get(op_id)
+
+        if operation:
+            operation.add_event(details)
+        else:
+            operation = Operation(op_id)
+            operation.add_event(details)
+            self.operations[op_id] = operation
+
+        # Once the operation is complete and loggable, log and discard it
+        if operation.loggable():
+            self.logger.log(self.reconstitute(operation.dict()))
+            del self.operations[op_id]  # Free memory by removing it
+
 
     def add_file_descriptor(self, rest):
         # Expecting something like:
