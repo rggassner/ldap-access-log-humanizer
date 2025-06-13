@@ -165,9 +165,9 @@ class Operation:
         elif tokenized_rest[0] == "ABANDON":
             self.requests.append({"verb": tokenized_rest[0], "details": tokenized_rest[1:]})
             self.response_verb = "None"
-        else:
+        #else:
             # This is just a catch all until we exhaust the supported verbs
-            raise Exception("Unsupported VERB in: {}".format(rest))
+            # raise Exception("Unsupported VERB in: {}".format(rest))
 
         # Sort the requests details, to make it more deterministic
         for request in self.requests:
