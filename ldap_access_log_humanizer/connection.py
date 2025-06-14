@@ -89,8 +89,8 @@ class Connection:
         pattern = r'^op=(\d+) (.*)$'
         match = re.search(pattern, rest)
 
-        if not match:
-            raise Exception('Malformed operation: {}'.format(rest))
+        #if not match:
+        #    raise Exception('Malformed operation: {}'.format(rest))
 
         op_id = int(match.group(1))
         details = match.group(2)
