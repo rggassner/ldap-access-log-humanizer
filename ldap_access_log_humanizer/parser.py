@@ -9,8 +9,13 @@ class Parser:
         self.connections = {}
 
     def parse(self):
-        for line in self.fp:
-            self.parse_line(line)
+        for line_num, line in enumerate(self.fp, 1):
+            try:
+                self.parse_line(line)
+            except UnicodeDecodeError as e:
+                print(f"Warning: Could not decode line {line_num}: {e}")
+            except Exception as e:
+                print(f"Warning: Failed to parse line {line_num}: {e}")
 
     def parse_line(self, line):
         event = RawLogParser(self.args_dict).parse(line.rstrip())
