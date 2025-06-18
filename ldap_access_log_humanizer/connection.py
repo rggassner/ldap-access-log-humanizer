@@ -59,11 +59,26 @@ class Connection:
         return self.authenticated_status
 
     def tls(self):
-        for file_descriptor in self.file_descriptors:
-            if file_descriptor.verb == "TLS" and file_descriptor.details.startswith("established"):
-                self.tls_status = True
-
-        return self.tls_status
+        """
+        Determines if the connection is using TLS.
+        Instead of relying on a TLS verb, infer it from the port (e.g., 636).
+        """
+        for fd in self.file_descriptors:
+            if fd.verb == "ACCEPT":
+                # Extract the port from details, e.g., "(IP=0.0.0.0:636)"
+                if "(IP=" in fd.details:
+                    dest_part = fd.details.split("(IP=")[1].split(")")[0]  # e.g., "0.0.0.0:636"
+                    port = int(dest_part.split(":")[1])
+                    if port == 636:
+                        return True
+        return False
+    
+#    def tls(self):
+#        for file_descriptor in self.file_descriptors:
+#            if file_descriptor.verb == "TLS" and file_descriptor.details.startswith("established"):
+#                self.tls_status = True
+#
+#        return self.tls_status
 
     def closed(self):
         for file_descriptor in self.file_descriptors:
