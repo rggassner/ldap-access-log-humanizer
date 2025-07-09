@@ -71,14 +71,12 @@ class Connection:
                     port = int(dest_part.split(":")[1])
                     if port == 636:
                         return True
-        return False
-    
-#    def tls(self):
-#        for file_descriptor in self.file_descriptors:
-#            if file_descriptor.verb == "TLS" and file_descriptor.details.startswith("established"):
-#                self.tls_status = True
-#
-#        return self.tls_status
+                if "(IP=" in fd.details:
+                    dest_part = fd.details.split("(IP=")[1].split(")")[0]  # e.g., "0.0.0.0:389"
+                    port = int(dest_part.split(":")[1])
+                    if port == 389:
+                        return False
+        return True
 
     def closed(self):
         for file_descriptor in self.file_descriptors:
